@@ -14,7 +14,7 @@ const path = require("path");
 const { loadContent } = require("../lib/load-content");
 
 const ROOT = path.join(__dirname, "..");
-const PLACEHOLDER_URL = "https://YOUR-LANDING-PAGE-URL";
+const PLACEHOLDER_URL = "https://pro-conferences-landing-page.vercel.app";
 
 /* ---------- CLI ---------- */
 

@@ -7,7 +7,7 @@ window.SITE_CONTENT = {
   site: {
     // Public URL of the deployed landing page. Used by the email invite
     // (button + logo links, and absolute image URLs). Update before generating the email.
-    url: "https://YOUR-LANDING-PAGE-URL"
+    url: "https://pro-conferences-landing-page.vercel.app"
   },
 
   meta: {
