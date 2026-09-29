@@ -29,11 +29,12 @@ window.SITE_CONTENT = {
       "ערב אחד, שולחן אחד, ומספר מצומצם של בעלי חברות ומנהלים מהענף. הרצאה של מומחה על מה שכבר עובד בשטח — ואחריה שיחה פתוחה בין המשתתפים."
   },
 
-  // Displayed right-to-left in this order
+  // Displayed right-to-left in this order.
+  // key ("place" | "time" | "date") lets the confirmation email find each value.
   details: [
-    { icon: "assets/images/place-icon.jpeg", label: "מיקום:", value: "מלחמת ששת הימים 10, חדרה" },
-    { icon: "assets/images/time-icon.jpeg", label: "שעה:", value: "10:00" },
-    { icon: "assets/images/date-icon.jpeg", label: "תאריך:", value: "19.10" }
+    { key: "place", icon: "assets/images/place-icon.jpeg", label: "מיקום:", value: "מלחמת ששת הימים 10, חדרה" },
+    { key: "time", icon: "assets/images/time-icon.jpeg", label: "שעה:", value: "10:00" },
+    { key: "date", icon: "assets/images/date-icon.jpeg", label: "תאריך:", value: "19.10" }
   ],
 
   agenda: {
@@ -94,7 +95,8 @@ window.SITE_CONTENT = {
     fields: {
       name: "שם מלא *",
       company: "חברה / תפקיד",
-      phone: "טלפון *"
+      phone: "טלפון *",
+      email: "אימייל *"
     },
     consent: "אשמח לקבל עדכונים על אירועים ותכנים נוספים של Pro Algorithm",
     submit: "שליחת אישור הגעה",
@@ -108,12 +110,25 @@ window.SITE_CONTENT = {
       subjectYes: "אישור הגעה לכנס: {name}",
       subjectNo: "ביטול הגעה לכנס: {name}"
     },
+    // Sent to the email the user entered — only when they confirmed attendance.
+    // Placeholders: {name} {title} {place} {date} {time}
+    confirmation: {
+      subject: "נרשמת בהצלחה לכנס {title}",
+      heading: "איזה כיף, נרשמת בהצלחה!",
+      greeting: "שלום {name},",
+      text: "שמחים לבשר שנרשמת לכנס {title}, שיתקיים ב{place}, בתאריך {date} בשעה {time}. שמרנו לך מקום סביב השולחן — נתראה שם!",
+      placeLabel: "מיקום",
+      dateLabel: "תאריך",
+      timeLabel: "שעה",
+      footer: "לשאלות ולשינויים אפשר ליצור איתנו קשר:"
+    },
     messages: {
       successYes: "תודה! אישור ההגעה התקבל, נתראה סביב השולחן.",
       successNo: "תודה על העדכון! נשמח לראותך באירוע הבא.",
       error: "אירעה שגיאה בשליחה. נסו שוב או צרו קשר בטלפון.",
       nameRequired: "יש למלא שם מלא",
-      phoneInvalid: "יש למלא מספר טלפון תקין"
+      phoneInvalid: "יש למלא מספר טלפון תקין",
+      emailInvalid: "יש למלא כתובת אימייל תקינה"
     }
   },
 

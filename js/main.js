@@ -16,6 +16,9 @@
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
   };
 
+  // Simple sanity check — the real check is that the confirmation email arrives
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
   function $(id) {
     return document.getElementById(id);
   }
@@ -127,6 +130,7 @@
     $("field-name").placeholder = R.fields.name;
     $("field-company").placeholder = R.fields.company;
     $("field-phone").placeholder = R.fields.phone;
+    $("field-email").placeholder = R.fields.email;
     setText("consent-text", R.consent);
     setText("btn-submit", R.submit);
   }
@@ -195,16 +199,24 @@
 
       var name = $("field-name");
       var phone = $("field-phone");
+      var email = $("field-email");
       var phoneDigits = phone.value.replace(/\D/g, "");
 
       var nameOk = name.value.trim().length >= 2;
+      var emailOk = EMAIL_RE.test(email.value.trim());
       var phoneOk = phoneDigits.length >= 9 && phoneDigits.length <= 12;
       markInvalid(name, !nameOk);
+      markInvalid(email, !emailOk);
       markInvalid(phone, !phoneOk);
 
       if (!nameOk) {
         showMessage(R.messages.nameRequired, "error");
         name.focus();
+        return;
+      }
+      if (!emailOk) {
+        showMessage(R.messages.emailInvalid, "error");
+        email.focus();
         return;
       }
       if (!phoneOk) {
@@ -218,6 +230,7 @@
         name: name.value.trim(),
         company: $("field-company").value.trim(),
         phone: phone.value.trim(),
+        email: email.value.trim(),
         consent: $("field-consent").checked,
         submittedAt: new Date().toISOString()
       };

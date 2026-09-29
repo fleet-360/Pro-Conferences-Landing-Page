@@ -4,13 +4,17 @@
 //
 // SMTP settings come from .env (see .env.example). Without SMTP_HOST the server runs in
 // dry-run mode: emails are printed to the console instead of being sent.
-// Recipients are read from js/content.js → rsvp.notify.recipients.
+// Each RSVP submission:
+//   1. emails the details to js/content.js → rsvp.notify.recipients
+//   2. emails a confirmation to the attendee (only if they're attending)
+//   3. POSTs the data to the Make scenario at MAKE_WEBHOOK_URL (.env)
 
 const fs = require("fs");
 const http = require("http");
 const path = require("path");
 const nodemailer = require("nodemailer");
 const { loadContent } = require("./lib/load-content");
+const { buildRsvpEmail, buildConfirmationEmail } = require("./lib/emails");
 
 const ROOT = __dirname;
 const ENV_PATH = path.join(ROOT, ".env");
@@ -32,75 +36,61 @@ const transporter = DRY_RUN
       auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined
     });
 
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-}
+const FROM = () => process.env.MAIL_FROM || process.env.SMTP_USER || "rsvp@localhost";
 
-function buildRsvpEmail(data, content) {
-  const notify = content.rsvp.notify;
-  const conferenceName = content.hero.title || "כנס Pro Algorithm";
-  const status = data.attending ? content.rsvp.attendingYes : content.rsvp.attendingNo;
-  const subjectTemplate = data.attending ? notify.subjectYes : notify.subjectNo;
-  // Strip line breaks so user input can't inject extra headers
-  const subject = subjectTemplate.replace("{name}", conferenceName).replace(/[\r\n]+/g, " ");
-
-  const rows = [
-    ["סטטוס", status],
-    ["שם מלא", data.name],
-    ["חברה / תפקיד", data.company || "—"],
-    ["טלפון", data.phone],
-    ["מעוניין/ת בעדכונים", data.consent ? "כן" : "לא"],
-    ["נשלח בתאריך", new Date().toLocaleString("he-IL", { timeZone: "Asia/Jerusalem" })]
-  ];
-
-  const text = rows.map(([k, v]) => `${k}: ${v}`).join("\n");
-  const html = `<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<body style="margin:0;padding:24px;background:#f7f7f7;font-family:Arial,sans-serif;direction:rtl;">
-  <table role="presentation" cellpadding="0" cellspacing="0" style="max-width:520px;width:100%;background:#ffffff;border-radius:12px;border:1px solid #e3e4ea;">
-    <tr><td style="padding:24px 28px 8px;font-size:20px;font-weight:bold;color:#000;text-align:right;">${escapeHtml(subject)}</td></tr>
-    <tr><td style="padding:8px 28px 24px;">
-      <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="font-size:15px;color:#111;">
-        ${rows
-          .map(
-            ([k, v]) =>
-              `<tr><td style="padding:8px 0;border-bottom:1px solid #eee;color:#555a66;width:40%;text-align:right;">${escapeHtml(k)}</td>` +
-              `<td style="padding:8px 0;border-bottom:1px solid #eee;font-weight:bold;text-align:right;">${escapeHtml(v)}</td></tr>`
-          )
-          .join("\n        ")}
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
-
-  return { subject, text, html };
-}
-
-async function sendRsvpEmail(data) {
-  const content = loadContent(); // re-read so edits to content.js apply without a restart
-  const recipients = (content.rsvp.notify && content.rsvp.notify.recipients) || [];
-  if (!recipients.length) throw new Error("rsvp.notify.recipients in js/content.js is empty");
-
-  const { subject, text, html } = buildRsvpEmail(data, content);
-  const info = await transporter.sendMail({
-    from: process.env.MAIL_FROM || process.env.SMTP_USER || "rsvp@localhost",
-    to: recipients.join(", "),
-    subject,
-    text,
-    html
-  });
-
+async function sendMail(message) {
+  const info = await transporter.sendMail({ from: FROM(), ...message });
   if (DRY_RUN) {
-    const msg = JSON.parse(info.message);
-    console.log("[dry-run] email not sent (no SMTP_HOST). Would send:");
-    console.log(`  to: ${recipients.join(", ")}\n  subject: ${msg.subject}\n  ${text.replace(/\n/g, "\n  ")}`);
+    console.log(`[dry-run] email not sent (no SMTP_HOST). Would send:\n  to: ${message.to}\n  subject: ${message.subject}\n  ${message.text.replace(/\n/g, "\n  ")}`);
   } else {
-    console.log(`[rsvp] email sent to ${recipients.join(", ")} (${info.messageId})`);
+    console.log(`[mail] sent "${message.subject}" to ${message.to} (${info.messageId})`);
   }
 }
 
+// 1) Internal notification to rsvp.notify.recipients — every submission
+async function sendNotification(data, content) {
+  const recipients = (content.rsvp.notify && content.rsvp.notify.recipients) || [];
+  if (!recipients.length) throw new Error("rsvp.notify.recipients in js/content.js is empty");
+  await sendMail({ to: recipients.join(", "), ...buildRsvpEmail(data, content) });
+}
+
+// 2) Confirmation to the attendee — only when they confirmed attendance
+async function sendConfirmation(data, content) {
+  if (!data.attending) return "skipped";
+  if (!content.rsvp.confirmation) throw new Error("rsvp.confirmation in js/content.js is missing");
+  await sendMail({ to: data.email, ...buildConfirmationEmail(data, content) });
+}
+
+// 3) Make scenario webhook — every submission
+async function sendToMake(data, content) {
+  const url = process.env.MAKE_WEBHOOK_URL;
+  if (!url) {
+    console.warn("[make] MAKE_WEBHOOK_URL not set — skipping webhook");
+    return "skipped";
+  }
+  const payload = {
+    status: data.attending ? content.rsvp.attendingYes : content.rsvp.attendingNo,
+    full_name: data.name,
+    company_job: data.company,
+    phone: data.phone,
+    email: data.email,
+    get_updates: data.consent,
+    date: data.submittedAt.toISOString(),
+    conference_name: content.hero.title
+  };
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(10000)
+  });
+  if (!res.ok) throw new Error(`Make webhook responded ${res.status}`);
+  console.log(`[make] webhook accepted (${res.status})`);
+}
+
 /* ---------- Validation ---------- */
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 function validateRsvp(body) {
   const str = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
@@ -109,10 +99,13 @@ function validateRsvp(body) {
     name: str(body.name, 100),
     company: str(body.company, 150),
     phone: str(body.phone, 30),
-    consent: body.consent === true
+    email: str(body.email, 200),
+    consent: body.consent === true,
+    submittedAt: new Date()
   };
   const digits = data.phone.replace(/\D/g, "");
   if (data.name.length < 2) return { error: "name" };
+  if (!EMAIL_RE.test(data.email)) return { error: "email" };
   if (digits.length < 9 || digits.length > 12) return { error: "phone" };
   return { data };
 }
@@ -174,13 +167,28 @@ async function handleRsvp(req, res) {
   const { data, error } = validateRsvp(body || {});
   if (error) return sendJson(res, 400, { ok: false, error });
 
+  let content;
   try {
-    await sendRsvpEmail(data);
-    sendJson(res, 200, { ok: true });
+    content = loadContent(); // re-read so edits to content.js apply without a restart
   } catch (err) {
-    console.error("[rsvp] failed to send email:", err.message);
-    sendJson(res, 500, { ok: false, error: "send_failed" });
+    console.error("[rsvp] failed to load content:", err.message);
+    return sendJson(res, 500, { ok: false, error: "server_error" });
   }
+
+  const [notification, confirmation, make] = await Promise.allSettled([
+    sendNotification(data, content),
+    sendConfirmation(data, content),
+    sendToMake(data, content)
+  ]);
+  if (notification.status === "rejected") console.error("[rsvp] notification email failed:", notification.reason.message);
+  if (confirmation.status === "rejected") console.error("[rsvp] confirmation email failed:", confirmation.reason.message);
+  if (make.status === "rejected") console.error("[rsvp] Make webhook failed:", make.reason.message);
+
+  // The RSVP counts as received if it reached the team by email or reached Make
+  const recorded =
+    notification.status === "fulfilled" || (make.status === "fulfilled" && make.value !== "skipped");
+  if (!recorded) return sendJson(res, 500, { ok: false, error: "send_failed" });
+  sendJson(res, 200, { ok: true });
 }
 
 // Only these paths are public — keeps .env, server.js, node_modules etc. private
