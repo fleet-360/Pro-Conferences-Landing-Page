@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pro Algorithm</title>
+  <meta name="description" content="">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Heebo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="assets/images/Icon-black.png">
+</head>
+<body>
+  <div class="page">
+    <img class="deco deco--top-right" id="deco-top-right" alt="" aria-hidden="true">
+    <img class="deco deco--top-left" id="deco-top-left" alt="" aria-hidden="true">
+
+    <header class="hero">
+      <img class="hero__logo" id="hero-logo">
+      <h1 class="hero__title" id="hero-title"></h1>
+      <p class="hero__subtitle" id="hero-subtitle"></p>
+      <ul class="details" id="details"></ul>
+    </header>
+
+    <main>
+      <section class="agenda">
+        <h2 class="section-title" id="agenda-title"></h2>
+        <ol class="agenda__list" id="agenda-list"></ol>
+      </section>
+
+      <section class="speakers" id="speakers"></section>
+
+      <section class="rsvp">
+        <h2 class="section-title" id="rsvp-section-title"></h2>
+
+        <div class="card-wrap">
+        <span class="blob blob--top" aria-hidden="true"></span>
+        <span class="blob blob--side" aria-hidden="true"></span>
+        <span class="blob blob--bottom" aria-hidden="true"></span>
+        <span class="dots dots--card" aria-hidden="true"></span>
+        <div class="card">
+          <div class="card__head">
+            <div>
+              <h3 class="card__title" id="rsvp-title"></h3>
+              <p class="card__subtitle" id="rsvp-subtitle"></p>
+            </div>
+            <div class="card__when">
+              <span id="rsvp-date"></span>
+              <span id="rsvp-time"></span>
+            </div>
+          </div>
+
+          <form class="rsvp-form" id="rsvp-form" novalidate>
+            <div class="toggle" role="radiogroup">
+              <button type="button" class="toggle__btn is-active" data-attending="yes" role="radio" aria-checked="true" id="btn-yes"></button>
+              <button type="button" class="toggle__btn" data-attending="no" role="radio" aria-checked="false" id="btn-no"></button>
+            </div>
+
+            <div class="fields">
+              <input class="input" type="text" name="name" id="field-name" autocomplete="name" required>
+              <input class="input" type="text" name="company" id="field-company" autocomplete="organization">
+              <input class="input" type="tel" name="phone" id="field-phone" autocomplete="tel" required dir="rtl">
+            </div>
+
+            <label class="consent">
+              <input type="checkbox" name="consent" id="field-consent">
+              <span id="consent-text"></span>
+            </label>
+
+            <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
+
+            <button type="submit" class="btn-primary" id="btn-submit"></button>
+          </form>
+
+          <hr class="card__divider">
+
+          <h3 class="card__title" id="contact-title"></h3>
+          <p class="card__subtitle" id="contact-subtitle"></p>
+          <ul class="contact" id="contact-list"></ul>
+        </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/content.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
