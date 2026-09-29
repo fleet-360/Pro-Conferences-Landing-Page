@@ -5,8 +5,8 @@
  */
 window.SITE_CONTENT = {
   site: {
-    // Public URL of the deployed landing page. Used by the email invite
-    // (button + logo links, and absolute image URLs). Update before generating the email.
+    // Public URL of the deployed landing page — the single place it is defined.
+    // Used by the email invite (button + logo links, and absolute image URLs).
     url: "https://pro-conferences-landing-page.vercel.app"
   },
 

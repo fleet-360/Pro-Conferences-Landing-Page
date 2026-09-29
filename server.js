@@ -4,8 +4,9 @@
 //
 // SMTP settings come from .env (see .env.example). Without SMTP_HOST the server runs in
 // dry-run mode: emails are printed to the console instead of being sent.
+// On Vercel, files in public/ are served directly by Vercel; this server only handles /api/rsvp.
 // Each RSVP submission:
-//   1. emails the details to js/content.js → rsvp.notify.recipients
+//   1. emails the details to public/js/content.js → rsvp.notify.recipients
 //   2. emails a confirmation to the attendee (only if they're attending)
 //   3. POSTs the data to the Make scenario at MAKE_WEBHOOK_URL (.env)
 
@@ -17,6 +18,7 @@ const { loadContent } = require("./lib/load-content");
 const { buildRsvpEmail, buildConfirmationEmail } = require("./lib/emails");
 
 const ROOT = __dirname;
+const PUBLIC_DIR = path.join(ROOT, "public");
 const ENV_PATH = path.join(ROOT, ".env");
 if (fs.existsSync(ENV_PATH)) process.loadEnvFile(ENV_PATH);
 
@@ -50,14 +52,14 @@ async function sendMail(message) {
 // 1) Internal notification to rsvp.notify.recipients — every submission
 async function sendNotification(data, content) {
   const recipients = (content.rsvp.notify && content.rsvp.notify.recipients) || [];
-  if (!recipients.length) throw new Error("rsvp.notify.recipients in js/content.js is empty");
+  if (!recipients.length) throw new Error("rsvp.notify.recipients in public/js/content.js is empty");
   await sendMail({ to: recipients.join(", "), ...buildRsvpEmail(data, content) });
 }
 
 // 2) Confirmation to the attendee — only when they confirmed attendance
 async function sendConfirmation(data, content) {
   if (!data.attending) return "skipped";
-  if (!content.rsvp.confirmation) throw new Error("rsvp.confirmation in js/content.js is missing");
+  if (!content.rsvp.confirmation) throw new Error("rsvp.confirmation in public/js/content.js is missing");
   await sendMail({ to: data.email, ...buildConfirmationEmail(data, content) });
 }
 
@@ -191,8 +193,6 @@ async function handleRsvp(req, res) {
   sendJson(res, 200, { ok: true });
 }
 
-// Only these paths are public — keeps .env, server.js, node_modules etc. private
-const PUBLIC = ["/index.html", "/css/", "/js/", "/assets/"];
 const MIME = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -216,9 +216,9 @@ function serveStatic(req, res) {
   }
   if (urlPath === "/") urlPath = "/index.html";
 
-  const filePath = path.normalize(path.join(ROOT, urlPath));
-  const isPublic = PUBLIC.some((p) => urlPath === p || (p.endsWith("/") && urlPath.startsWith(p)));
-  if (!isPublic || !filePath.startsWith(ROOT + path.sep)) {
+  // Only files inside public/ are served — keeps .env, server.js, node_modules etc. private
+  const filePath = path.normalize(path.join(PUBLIC_DIR, urlPath));
+  if (!filePath.startsWith(PUBLIC_DIR + path.sep)) {
     res.writeHead(404);
     return res.end("Not found");
   }
