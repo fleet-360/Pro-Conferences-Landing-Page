@@ -7,7 +7,7 @@ window.SITE_CONTENT = {
   site: {
     // Public URL of the deployed landing page — the single place it is defined.
     // Used by the email invite (button + logo links, and absolute image URLs).
-    url: "https://pro-conferences-landing-page.vercel.app"
+    url: "https://conferences.buildalgo.co.il/"
   },
 
   meta: {
