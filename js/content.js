@@ -4,6 +4,12 @@
  * Paths are relative to index.html.
  */
 window.SITE_CONTENT = {
+  site: {
+    // Public URL of the deployed landing page. Used by the email invite
+    // (button + logo links, and absolute image URLs). Update before generating the email.
+    url: "https://YOUR-LANDING-PAGE-URL"
+  },
+
   meta: {
     title: "Pro Algorithm | הטמעת AI בעולם התכנון והאדריכלות",
     description:
@@ -92,9 +98,16 @@ window.SITE_CONTENT = {
     },
     consent: "אשמח לקבל עדכונים על אירועים ותכנים נוספים של Pro Algorithm",
     submit: "שליחת אישור הגעה",
-    // Optional: URL that receives the form as a JSON POST (e.g. a Make/Zapier webhook).
-    // Leave empty to only show the confirmation message.
-    endpoint: "",
+    // Where the form is POSTed as JSON. "/api/rsvp" is handled by server.js (npm start),
+    // which emails the submission to notify.recipients below.
+    // Set to "" to only show the confirmation message without sending anything.
+    endpoint: "/api/rsvp",
+    notify: {
+      // Every RSVP submission is emailed to these addresses
+      recipients: ["sales@pro-algo.com", "sharon@pro-algorithm.co.il", "tzach@pro-algorithm.co.il"],
+      subjectYes: "אישור הגעה לכנס: {name}",
+      subjectNo: "ביטול הגעה לכנס: {name}"
+    },
     messages: {
       successYes: "תודה! אישור ההגעה התקבל, נתראה סביב השולחן.",
       successNo: "תודה על העדכון! נשמח לראותך באירוע הבא.",
@@ -102,6 +115,20 @@ window.SITE_CONTENT = {
       nameRequired: "יש למלא שם מלא",
       phoneInvalid: "יש למלא מספר טלפון תקין"
     }
+  },
+
+  // Texts used only by the email invite (npm run email → email/invite-email.html)
+  emailInvite: {
+    subject: "הזמנה: הטמעת AI בעולם התכנון והאדריכלות",
+    preheader: "ערב אחד, שולחן אחד — הרצאה ושיחה פתוחה על הטמעת AI במשרדי תכנון. 19.10 בשעה 10:00, חדרה.",
+    rsvpText: "מספר המקומות סביב השולחן מוגבל. אשרו הגעה בלחיצה על הכפתור ושריינו לכם מקום.",
+    dateLabel: "תאריך",
+    dateValue: "19.10",
+    timeLabel: "שעה",
+    timeValue: "10:00",
+    button: "לאישור הגעה",
+    // Anchor on the landing page the button jumps to
+    buttonAnchor: "#rsvp"
   },
 
   contact: {

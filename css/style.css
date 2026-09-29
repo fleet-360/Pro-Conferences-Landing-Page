@@ -163,14 +163,10 @@ ol {
 
 .agenda__item {
   position: relative;
-  width: min(1215px, 90vw);
+  width: 80vw;
   margin-right: 0;
   margin-left: auto;
   aspect-ratio: 1600 / 290;
-}
-
-.agenda__item:nth-child(even) {
-  width: min(1193px, 88vw);
 }
 
 .agenda__banner {
@@ -585,8 +581,7 @@ ol {
     height: 100px;
   }
 
-  .agenda__item,
-  .agenda__item:nth-child(even) {
+  .agenda__item {
     width: 100%;
     aspect-ratio: auto;
     margin-bottom: 24px;

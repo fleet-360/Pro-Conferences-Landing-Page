@@ -1,0 +1,16 @@
+{
+  "name": "pro-conferences-landing-page",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pro Algorithm conference landing page, RSVP email sender and email-invite generator",
+  "scripts": {
+    "start": "node server.js",
+    "email": "node scripts/generate-email.js"
+  },
+  "engines": {
+    "node": ">=21.7"
+  },
+  "dependencies": {
+    "nodemailer": "^10.0.12"
+  }
+}

@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "landing",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "5510"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server.js"],
       "port": 5510
     }
   ]
