@@ -56,12 +56,6 @@ function makeUrl(base) {
   return (p) => (/^(https?:|mailto:|tel:)/.test(p) ? p : `${root}/${p.replace(/^\/+/, "")}`);
 }
 
-// Agenda banner assets derived from the landing page banners (public/assets/images/point-N.jpeg)
-function agendaAssets(image) {
-  const base = path.basename(image).replace(/\.[^.]+$/, "");
-  return { bg: `assets/email/${base}-bg.jpg`, num: `assets/email/${base}-num.jpg` };
-}
-
 function timestamp() {
   const now = new Date();
   const local = now.toLocaleString("sv-SE", { timeZone: "Asia/Jerusalem" }).slice(0, 16);
@@ -134,22 +128,33 @@ function details(C, url) {
           </tr>`;
 }
 
-function agenda(C, url) {
+// Agenda points are drawn with CSS like on the website (no images): a white block with the
+// number, fading into purple and out into the page. Clients without gradient support
+// (Outlook desktop) show the solid bgcolor instead. The number is a solid colour because
+// gradient text isn't supported in email clients.
+const AGENDA_GRADIENT = `linear-gradient(to left, #ffffff 0%, #ffffff 20%, #e0e4fc 40%, #d8dbf9 58%, #e6e2f5 80%, ${BG} 100%)`;
+const AGENDA_FALLBACK = "#e4e3f8";
+const AGENDA_NUM_COLOR = "#5146dc";
+
+function agenda(C) {
   const rows = C.agenda.items
-    .map((item) => {
-      const a = agendaAssets(item.image);
+    .map((item, i) => {
+      const num = String(i + 1).padStart(2, "0");
       return `
           <tr>
             <td style="padding:0 0 14px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" dir="rtl" style="box-shadow:0 6px 12px rgba(90,80,160,0.12);">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" dir="rtl">
                 <tr>
-                  <td width="120" valign="middle" bgcolor="#ffffff" style="width:120px;padding:0;line-height:0;background:#ffffff;">
-                    <img src="${url(a.num)}" width="120" height="80" alt="" style="display:block;width:120px;height:80px;border:0;">
-                  </td>
-                  <td valign="middle" bgcolor="#e4e3f8" background="${url(a.bg)}"
-                      style="height:80px;padding:12px 16px 12px 24px;background-color:#e4e3f8;background-image:url('${url(a.bg)}');background-repeat:no-repeat;background-position:right center;background-size:cover;text-align:right;">
-                    <div style="font-family:${FONT};font-size:17px;line-height:22px;font-weight:700;color:#000000;">${esc(item.title)}</div>
-                    <div style="font-family:${FONT};font-size:14px;line-height:19px;font-weight:300;color:#000000;padding-top:4px;">${esc(item.text)}</div>
+                  <td bgcolor="${AGENDA_FALLBACK}" style="padding:0;background-color:${AGENDA_FALLBACK};background-image:${AGENDA_GRADIENT};box-shadow:0 6px 10px rgba(84,72,160,0.10);">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" dir="rtl">
+                      <tr>
+                        <td width="110" valign="middle" align="center" dir="ltr" style="width:110px;padding:14px 0;font-family:'Poppins', Arial, Helvetica, sans-serif;font-size:50px;line-height:52px;font-weight:700;color:${AGENDA_NUM_COLOR};">${num}</td>
+                        <td valign="middle" style="height:80px;padding:14px 8px 14px 24px;text-align:right;">
+                          <div style="font-family:${FONT};font-size:17px;line-height:22px;font-weight:700;color:#000000;">${esc(item.title)}</div>
+                          <div style="font-family:${FONT};font-size:14px;line-height:19px;font-weight:300;color:#000000;padding-top:4px;">${esc(item.text)}</div>
+                        </td>
+                      </tr>
+                    </table>
                   </td>
                 </tr>
               </table>
@@ -305,7 +310,7 @@ function buildEmail(C, siteUrl) {
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="x-apple-disable-message-reformatting">
   <title>${esc(E.subject)}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Heebo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <style>
     body { margin: 0; padding: 0; background: ${BG}; }
     table { border-collapse: collapse; }
@@ -328,7 +333,7 @@ function buildEmail(C, siteUrl) {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${BG}" style="background:${BG};">
     <tr>
       <td align="center" style="padding:0;">
-        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="container" dir="rtl" style="width:600px;max-width:600px;background:${BG};">${header(C, url)}${hero(C)}${details(C, url)}${agenda(C, url)}${speakers(C, url)}${rsvpCard(C, url)}
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="container" dir="rtl" style="width:600px;max-width:600px;background:${BG};">${header(C, url)}${hero(C)}${details(C, url)}${agenda(C)}${speakers(C, url)}${rsvpCard(C, url)}
         </table>
       </td>
     </tr>
@@ -367,7 +372,6 @@ function main() {
     C.decorations.topRight,
     C.hero.logo.src,
     ...C.details.map((d) => d.icon),
-    ...C.agenda.items.flatMap((i) => Object.values(agendaAssets(i.image))),
     ...C.speakers.map((s) => s.image),
     ...C.contact.items.map((c) => CONTACT_ICONS[c.icon] || CONTACT_ICONS.web)
   ];

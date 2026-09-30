@@ -39,21 +39,17 @@ window.SITE_CONTENT = {
 
   agenda: {
     title: "מה יהיה על השולחן",
-    // The website draws each point (number, gradient, shadow) with CSS.
-    // "image" is only used by the email invite (npm run email).
+    // Each point (number, gradient, shadow) is drawn with CSS, on the website and in the email invite.
     items: [
       {
-        image: "assets/images/point-1.jpeg",
         title: "פחות שעות על מפרטים, גיליונות מכר ורשימות",
         text: "מפרטים טכניים, גיליונות מכר ורשימות אלומיניום, מסגרות ונגרות: דוגמאות מפרויקטים שאנחנו כבר עובדים עליהם, וכמה שעות זה חוסך למשרד בפועל."
       },
       {
-        image: "assets/images/point-2.jpeg",
         title: "בדיקת תוכניות לפני שהטעות מגיעה לשטח",
         text: "בטיחות אש, ממדים ומדרגות: איך AI עובר על התוכניות ומסמן חריגות ואי-התאמות, לפני שהן חוזרות אליכם מהיועצים או מהאתר."
       },
       {
-        image: "assets/images/point-3.jpeg",
         title: "לנהל פרויקט בלי לטבוע במיילים ובמעקבים",
         text: "מהצד של המנהל: איך AI מרכז את ההתכתבות מול היועצים, עוקב אחרי מה שפתוח ומה שמתעכב, ומחזיר לכם שליטה על הפרויקט."
       }
