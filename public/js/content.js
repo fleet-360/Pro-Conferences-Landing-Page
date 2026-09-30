@@ -73,7 +73,7 @@ window.SITE_CONTENT = {
     },
     {
       name: "צח דבוש",
-      role: "מנכ”ל פרו אלגוריתם",
+      role: "CTO פרו אלגוריתם",
       image: "assets/images/tzach-bg.jpeg",
       imageSide: "left",
       talkTitle: "הטמעת AI בתכנון: לא עוד כלי, אלא דרך עבודה חדשה",
