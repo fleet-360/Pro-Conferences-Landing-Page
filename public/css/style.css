@@ -156,33 +156,66 @@ ol {
   margin-top: 110px;
 }
 
+/* Agenda points are drawn with CSS: a white block holding the number that fades
+   into purple and then out into the page. Horizontal banners by default (fading
+   towards the left); on large screens they become three columns fading downwards. */
+
 .agenda__list {
+  --agenda-fade: to left;
   display: flex;
   flex-direction: column;
+  gap: 28px;
 }
 
 .agenda__item {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 40px);
   width: 80vw;
+  min-height: 130px;
   margin-right: 0;
   margin-left: auto;
-  aspect-ratio: 1600 / 290;
+  padding: 22px clamp(16px, 3vw, 40px) 22px 12%;
 }
 
+/* Background layer — separate element so its shadow doesn't apply to the text */
 .agenda__banner {
   position: absolute;
   inset: 0;
-  background-position: center;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
+  z-index: 0;
+  background: linear-gradient(
+    var(--agenda-fade),
+    #ffffff 0%,
+    #ffffff 14%,
+    #e0e4fc 36%,
+    #d8dbf9 56%,
+    #e6e2f5 78%,
+    rgba(247, 247, 247, 0) 100%
+  );
+  /* drop-shadow follows the gradient's transparency, so the shadow fades out with it */
+  filter: drop-shadow(0 10px 10px rgba(84, 72, 160, 0.16));
+}
+
+.agenda__num {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  font-family: "Poppins", var(--font);
+  font-size: clamp(52px, 8vw, 104px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  direction: ltr;
+  background: linear-gradient(135deg, var(--primary) 20%, var(--primary-2) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .agenda__body {
-  position: absolute;
-  top: 50%;
-  right: 16%;
-  left: 12%;
-  transform: translateY(-50%);
+  position: relative;
+  z-index: 1;
   text-align: right;
 }
 
@@ -194,9 +227,50 @@ ol {
 }
 
 .agenda__text {
-  font-size: clamp(16px, 1.6vw, 24px);
+  font-size: clamp(16px, 1.6vw, 22px);
   font-weight: 300;
-  line-height: 1.2;
+  line-height: 1.3;
+}
+
+/* Large screens: three columns in one row, fading downwards */
+@media (min-width: 1024px) {
+  .agenda__list {
+    --agenda-fade: to bottom;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 36px;
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .agenda__item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+    width: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 36px 32px 110px;
+  }
+
+  .agenda__banner {
+    filter: drop-shadow(0 12px 14px rgba(84, 72, 160, 0.14));
+  }
+
+  .agenda__num {
+    font-size: 96px;
+  }
+
+  .agenda__title {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .agenda__text {
+    font-size: 19px;
+    line-height: 1.4;
+  }
 }
 
 /* ---------- Speakers ---------- */
@@ -582,20 +656,8 @@ ol {
   }
 
   .agenda__item {
-    width: 100%;
-    aspect-ratio: auto;
-    margin-bottom: 24px;
-  }
-
-  .agenda__banner {
-    position: static;
-    aspect-ratio: 1600 / 290;
-  }
-
-  .agenda__body {
-    position: static;
-    transform: none;
-    padding: 12px 24px 0;
+    width: 94vw;
+    padding-left: 8%;
   }
 
   .speaker,
@@ -671,8 +733,14 @@ ol {
     padding: 0 16px;
   }
 
-  .agenda__body {
-    padding: 12px 16px 0;
+  .agenda__list {
+    gap: 20px;
+  }
+
+  .agenda__item {
+    width: 100%;
+    min-height: 110px;
+    padding: 18px 14px 18px 24px;
   }
 
   .toggle {

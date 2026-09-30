@@ -79,14 +79,16 @@
   function renderAgenda() {
     setText("agenda-title", C.agenda.title);
     var list = $("agenda-list");
-    C.agenda.items.forEach(function (item) {
+    C.agenda.items.forEach(function (item, i) {
       var li = el("li", "agenda__item");
       var banner = el("div", "agenda__banner");
-      banner.style.backgroundImage = 'url("' + item.image + '")';
+      var num = el("span", "agenda__num", (i + 1 < 10 ? "0" : "") + (i + 1));
+      num.setAttribute("aria-hidden", "true");
       var body = el("div", "agenda__body");
       body.appendChild(el("h3", "agenda__title", item.title));
       body.appendChild(el("p", "agenda__text", item.text));
       li.appendChild(banner);
+      li.appendChild(num);
       li.appendChild(body);
       list.appendChild(li);
     });

@@ -39,6 +39,8 @@ window.SITE_CONTENT = {
 
   agenda: {
     title: "מה יהיה על השולחן",
+    // The website draws each point (number, gradient, shadow) with CSS.
+    // "image" is only used by the email invite (npm run email).
     items: [
       {
         image: "assets/images/point-1.jpeg",
