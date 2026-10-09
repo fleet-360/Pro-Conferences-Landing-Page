@@ -109,6 +109,7 @@
       var info = el("div", "speaker__info");
       info.appendChild(el("h2", "speaker__name", s.name));
       if (s.role) info.appendChild(el("p", "speaker__role", s.role));
+      if (s.roleNote) info.appendChild(el("p", "speaker__role-note", s.roleNote));
       if (s.talkTitle) info.appendChild(el("h3", "speaker__talk", s.talkTitle));
       (s.paragraphs || []).forEach(function (p) {
         info.appendChild(el("p", "speaker__text", p));

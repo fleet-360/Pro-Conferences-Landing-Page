@@ -57,10 +57,12 @@ window.SITE_CONTENT = {
   },
 
   // imageSide: "right" or "left" — which side of the row the photo sits on
+  // roleNote (optional): smaller line shown under the role
   speakers: [
     {
-      name: "ד”ר לוטם אלוש",
-      role: "",
+      name: "לוטם אלוש",
+      role: "דוקטורנטית",
+      roleNote: "בר אילן",
       image: "assets/images/lotem-bg.jpeg",
       imageSide: "right",
       talkTitle: "הרצאה על השפעות ה AI על עובדי התכנון",

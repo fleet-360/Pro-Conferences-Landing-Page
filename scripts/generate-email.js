@@ -188,6 +188,7 @@ function speakers(C, url) {
                   <td valign="top" class="stack" style="padding:18px 16px 0;text-align:right;">
                     <div style="font-family:${FONT};font-size:19px;line-height:24px;font-weight:700;color:#000000;">${esc(s.name)}</div>
                     ${s.role ? `<div style="font-family:${FONT};font-size:17px;line-height:22px;font-weight:700;color:#000000;">${esc(s.role)}</div>` : ""}
+                    ${s.roleNote ? `<div style="font-family:${FONT};font-size:13px;line-height:18px;font-weight:400;color:#111111;">${esc(s.roleNote)}</div>` : ""}
                     ${s.talkTitle ? `<div style="font-family:${FONT};font-size:16px;line-height:21px;font-weight:600;color:#111111;padding:8px 0 6px;">${esc(s.talkTitle)}</div>` : ""}
                     ${paragraphs}
                   </td>`;
