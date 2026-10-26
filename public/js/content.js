@@ -26,7 +26,7 @@ window.SITE_CONTENT = {
     logo: { src: "assets/images/MAIN-LOGO.png", alt: "Pro Algorithm" },
     title: "הטמעת AI בעולם התכנון והאדריכלות",
     subtitle:
-      "בוקר אחד, שולחן אחד, ומספר מצומצם של בעלי חברות ומנהלים מהענף. הרצאה של מומחה על מה שכבר עובד בשטח — ואחריה שיחה פתוחה בין המשתתפים."
+      "לאור ההצלחה של הכנס הקודם, אנחנו מקיימים מפגש נוסף באותה מתכונת: בוקר אחד, שולחן אחד, ומספר מצומצם של בעלי חברות ומנהלים מהענף. הרצאה של מומחה על מה שכבר עובד בשטח — ואחריה שיחה פתוחה בין המשתתפים."
   },
 
   // Displayed right-to-left in this order.
@@ -34,7 +34,7 @@ window.SITE_CONTENT = {
   details: [
     { key: "place", icon: "assets/images/place-icon.jpeg", label: "מיקום:", value: "מלחמת ששת הימים 10, חדרה" },
     { key: "time", icon: "assets/images/time-icon.jpeg", label: "שעה:", value: "10:00" },
-    { key: "date", icon: "assets/images/date-icon.jpeg", label: "תאריך:", value: "19.10" }
+    { key: "date", icon: "assets/images/date-icon-5.jpeg", label: "תאריך:", value: "5.11" }
   ],
 
   agenda: {
@@ -88,7 +88,7 @@ window.SITE_CONTENT = {
     sectionTitle: "שומרים לך מקום סביב השולחן",
     title: "אישור הגעה",
     subtitle: "מספר המקומות סביב השולחן מוגבל, לכן נשמח לדעת מראש מי מגיע.",
-    dateLabel: "תאריך: 19.10",
+    dateLabel: "תאריך: 5.11",
     timeLabel: "שעה: 10:00",
     attendingYes: "כן, אגיע",
     attendingNo: "לא אוכל להגיע",
@@ -134,11 +134,11 @@ window.SITE_CONTENT = {
 
   // Texts used only by the email invite (npm run email → email/invite-email.html)
   emailInvite: {
-    subject: "הזמנה: הטמעת AI בעולם התכנון והאדריכלות",
-    preheader: "בוקר אחד, שולחן אחד — הרצאה ושיחה פתוחה על הטמעת AI במשרדי תכנון. 19.10 בשעה 10:00, חדרה.",
+    subject: "הזמנה: הטמעת AI בעולם התכנון והאדריכלות — מפגש נוסף",
+    preheader: "לאור ההצלחה, מפגש נוסף: בוקר אחד, שולחן אחד — הרצאה ושיחה פתוחה על הטמעת AI במשרדי תכנון. 5.11 בשעה 10:00, חדרה.",
     rsvpText: "מספר המקומות סביב השולחן מוגבל. אשרו הגעה בלחיצה על הכפתור ושריינו לכם מקום.",
     dateLabel: "תאריך",
-    dateValue: "19.10",
+    dateValue: "5.11",
     timeLabel: "שעה",
     timeValue: "10:00",
     button: "לאישור הגעה",
