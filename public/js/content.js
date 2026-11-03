@@ -33,8 +33,8 @@ window.SITE_CONTENT = {
   // key ("place" | "time" | "date") lets the confirmation email find each value.
   details: [
     { key: "place", icon: "assets/images/place-icon.jpeg", label: "מיקום:", value: "מלחמת ששת הימים 10, חדרה" },
-    { key: "time", icon: "assets/images/time-icon.jpeg", label: "שעה:", value: "10:00" },
-    { key: "date", icon: "assets/images/date-icon-5.jpeg", label: "תאריך:", value: "5.11" }
+    { key: "time", icon: "assets/images/time-icon.jpeg", label: "שעה:", value: "11:00" },
+    { key: "date", icon: "assets/images/date-icon-10.jpeg", label: "תאריך:", value: "10.11" }
   ],
 
   agenda: {
@@ -88,8 +88,8 @@ window.SITE_CONTENT = {
     sectionTitle: "שומרים לך מקום סביב השולחן",
     title: "אישור הגעה",
     subtitle: "מספר המקומות סביב השולחן מוגבל, לכן נשמח לדעת מראש מי מגיע.",
-    dateLabel: "תאריך: 5.11",
-    timeLabel: "שעה: 10:00",
+    dateLabel: "תאריך: 10.11",
+    timeLabel: "שעה: 11:00",
     attendingYes: "כן, אגיע",
     attendingNo: "לא אוכל להגיע",
     fields: {
@@ -135,12 +135,12 @@ window.SITE_CONTENT = {
   // Texts used only by the email invite (npm run email → email/invite-email.html)
   emailInvite: {
     subject: "הזמנה: הטמעת AI בעולם התכנון והאדריכלות — מפגש נוסף",
-    preheader: "לאור ההצלחה, מפגש נוסף: בוקר אחד, שולחן אחד — הרצאה ושיחה פתוחה על הטמעת AI במשרדי תכנון. 5.11 בשעה 10:00, חדרה.",
+    preheader: "לאור ההצלחה, מפגש נוסף: בוקר אחד, שולחן אחד — הרצאה ושיחה פתוחה על הטמעת AI במשרדי תכנון. 10.11 בשעה 11:00, חדרה.",
     rsvpText: "מספר המקומות סביב השולחן מוגבל. אשרו הגעה בלחיצה על הכפתור ושריינו לכם מקום.",
     dateLabel: "תאריך",
-    dateValue: "5.11",
+    dateValue: "10.11",
     timeLabel: "שעה",
-    timeValue: "10:00",
+    timeValue: "11:00",
     button: "לאישור הגעה",
     // Anchor on the landing page the button jumps to
     buttonAnchor: "#rsvp"
