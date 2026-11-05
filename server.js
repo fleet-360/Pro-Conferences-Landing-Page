@@ -78,7 +78,7 @@ async function sendToMake(data, content) {
     email: data.email,
     get_updates: data.consent,
     date: data.submittedAt.toISOString(),
-    conference_name: content.hero.title
+    conference_name: content.eventName || content.hero.title
   };
   const res = await fetch(url, {
     method: "POST",
@@ -103,6 +103,7 @@ function validateRsvp(body) {
     phone: str(body.phone, 30),
     email: str(body.email, 200),
     consent: body.consent === true,
+    event: body.event === "zoom" ? "zoom" : "",
     submittedAt: new Date()
   };
   const digits = data.phone.replace(/\D/g, "");
@@ -171,7 +172,7 @@ async function handleRsvp(req, res) {
 
   let content;
   try {
-    content = loadContent(); // re-read so edits to content.js apply without a restart
+    content = loadContent(data.event); // re-read so edits to content.js apply without a restart
   } catch (err) {
     console.error("[rsvp] failed to load content:", err.message);
     return sendJson(res, 500, { ok: false, error: "server_error" });
@@ -215,6 +216,7 @@ function serveStatic(req, res) {
     return res.end("Bad request");
   }
   if (urlPath === "/") urlPath = "/index.html";
+  if (urlPath === "/zoom" || urlPath === "/zoom/") urlPath = "/zoom/index.html";
 
   // Only files inside public/ are served — keeps .env, server.js, node_modules etc. private
   const filePath = path.normalize(path.join(PUBLIC_DIR, urlPath));

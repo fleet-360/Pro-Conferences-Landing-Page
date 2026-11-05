@@ -237,6 +237,7 @@
         consent: $("field-consent").checked,
         submittedAt: new Date().toISOString()
       };
+      if (C.eventKey) data.event = C.eventKey;
 
       function onSuccess() {
         showMessage(data.attending ? R.messages.successYes : R.messages.successNo, "success");
